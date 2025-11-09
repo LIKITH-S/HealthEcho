@@ -1,0 +1,2 @@
+-- Drug interaction database seed (placeholder)
+-- Insert common interactions here

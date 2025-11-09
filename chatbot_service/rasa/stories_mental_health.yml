@@ -1,0 +1,21 @@
+version: "3.1"
+
+stories:
+- story: greet and ask
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: medication_question
+  - action: utter_medication_info
+
+- story: symptom support
+  steps:
+  - intent: symptom_inquiry
+  - action: utter_symptom_support
+  - intent: emergency
+  - action: utter_emergency
+
+- story: goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye

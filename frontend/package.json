@@ -1,0 +1,33 @@
+{
+    "name": "healthecho-frontend",
+    "version": "1.0.0",
+    "description": "HealthEcho - AI Healthcare Assistant Frontend",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "lint": "eslint src --ext js,jsx"
+    },
+    "dependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^6.15.0",
+        "axios": "^1.6.0",
+        "i18next": "^23.5.0",
+        "react-i18next": "^13.2.0",
+        "chart.js": "^4.4.0",
+        "react-chartjs-2": "^5.2.0",
+        "react-dropzone": "^14.2.3",
+        "tailwindcss": "^3.3.3",
+        "date-fns": "^2.30.0",
+        "zustand": "^4.4.1"
+    },
+    "devDependencies": {
+        "vite": "^4.5.0",
+        "@vitejs/plugin-react": "^4.0.3",
+        "eslint": "^8.49.0",
+        "autoprefixer": "^10.4.16",
+        "postcss": "^8.4.31"
+    }
+}

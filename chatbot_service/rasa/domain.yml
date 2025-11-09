@@ -1,0 +1,48 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - medication_question
+  - symptom_inquiry
+  - test_results
+  - appointment
+  - emergency
+  - mental_health
+
+entities:
+  - medication
+  - symptom
+  - test_type
+
+slots:
+  patient_name:
+    type: text
+  medication_name:
+    type: text
+  symptom:
+    type: text
+
+responses:
+  utter_greet:
+    - text: "Hello! I'm HealthEcho. How can I assist you today?"
+
+  utter_medication_info:
+    - text: "I can help with medication information. What medication would you like to know about?"
+
+  utter_symptom_support:
+    - text: "I'm here to help. Can you describe your symptoms?"
+
+  utter_emergency:
+    - text: "This seems urgent! Please contact emergency services or inform your doctor immediately."
+
+  utter_goodbye:
+    - text: "Take care! Contact your doctor if you have any concerns."
+
+actions:
+  - action_listen
+  - action_default_fallback
+  - action_medication_lookup
+  - action_mental_health_support

@@ -1,0 +1,43 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - Hi
+    - Hello
+    - Good morning
+    - Hey there
+
+- intent: goodbye
+  examples: |
+    - Bye
+    - Goodbye
+    - See you later
+    - Farewell
+
+- intent: medication_question
+  examples: |
+    - What are the side effects of [medication](medication)?
+    - Can I take [aspirin](medication)?
+    - How much [paracetamol](medication) should I take?
+    - Information about [insulin](medication)
+
+- intent: symptom_inquiry
+  examples: |
+    - I have [fever](symptom)
+    - My [head](symptom) hurts
+    - I'm experiencing [chest pain](symptom)
+    - Why am I [dizzy](symptom)?
+
+- intent: test_results
+  examples: |
+    - What do my blood test results mean?
+    - Can you explain my reports?
+    - What's a normal [glucose](test_type) level?
+
+- intent: emergency
+  examples: |
+    - I can't breathe
+    - Call ambulance
+    - Emergency help
+    - Severe chest pain
