@@ -1,21 +1,117 @@
 version: "3.1"
 
 stories:
-- story: greet and ask
+- story: greet and medication inquiry
   steps:
   - intent: greet
   - action: utter_greet
   - intent: medication_question
   - action: utter_medication_info
+  - action: action_medication_lookup
 
-- story: symptom support
+- story: symptom support flow
   steps:
   - intent: symptom_inquiry
   - action: utter_symptom_support
+  - action: utter_ask_severity
+  - intent: affirm
+  - action: action_symptom_checker
+
+- story: emergency response
+  steps:
   - intent: emergency
   - action: utter_emergency
+  - action: action_emergency_protocol
 
-- story: goodbye
+- story: mental health support conversation
+  steps:
+  - intent: mental_health
+  - action: utter_mental_health_intro
+  - intent: affirm
+  - action: action_mental_health_screening
+
+- story: anxiety support path
+  steps:
+  - intent: anxiety_concern
+  - action: utter_anxiety_support
+  - action: action_mental_health_support
+  - intent: affirm
+  - action: action_provide_recommendations
+
+- story: depression support path
+  steps:
+  - intent: depression_concern
+  - action: utter_depression_support
+  - action: action_mental_health_screening
+  - intent: affirm
+  - action: action_provide_recommendations
+
+- story: stress management
+  steps:
+  - intent: stress_management
+  - action: utter_mental_health_intro
+  - action: action_provide_recommendations
+
+- story: test results explanation
+  steps:
+  - intent: test_results
+  - action: utter_test_results_intro
+  - action: action_analyze_report
+
+- story: report upload flow
+  steps:
+  - intent: report_upload
+  - action: utter_report_upload_prompt
+  - action: action_analyze_report
+  - action: action_provide_recommendations
+
+- story: health history inquiry
+  steps:
+  - intent: health_history
+  - action: action_provide_recommendations
+
+- story: appointment booking
+  steps:
+  - intent: appointment
+  - action: action_schedule_appointment
+
+- story: help request
+  steps:
+  - intent: ask_help
+  - action: utter_help
+
+- story: out of scope handling
+  steps:
+  - intent: out_of_scope
+  - action: utter_out_of_scope
+
+- story: complete health consultation
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: symptom_inquiry
+  - action: utter_symptom_support
+  - intent: affirm
+  - action: action_symptom_checker
+  - intent: medication_question
+  - action: action_medication_lookup
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: mental health screening flow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mental_health
+  - action: utter_mental_health_intro
+  - intent: depression_concern
+  - action: utter_depression_support
+  - action: action_mental_health_screening
+  - action: action_provide_recommendations
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: goodbye path
   steps:
   - intent: goodbye
   - action: utter_goodbye
