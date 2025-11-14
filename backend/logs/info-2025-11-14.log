@@ -10,3 +10,6 @@
 {"timestamp":"2025-11-14T04:18:59.354Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
 {"timestamp":"2025-11-14T04:19:28.681Z","level":"INFO","message":"User logged in successfully","email":"likithinnote1@gmail.com","role":"patient"}
 {"timestamp":"2025-11-14T04:21:49.775Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T04:40:05.866Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T04:53:18.574Z","level":"INFO","message":"User registered successfully","email":"gagan@doctor.com","role":"doctor"}
+{"timestamp":"2025-11-14T04:53:26.642Z","level":"INFO","message":"User logged in successfully","email":"gagan@doctor.com","role":"doctor"}

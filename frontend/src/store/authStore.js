@@ -13,7 +13,9 @@ export const useAuthStore = create(
             isLoading: false,
             error: null,
 
-            // Login
+            // -------------------------------
+            // LOGIN
+            // -------------------------------
             login: async (email, password, role) => {
                 set({ isLoading: true, error: null })
                 try {
@@ -43,22 +45,30 @@ export const useAuthStore = create(
                 }
             },
 
+            // -------------------------------
+            // REGISTER
+            // -------------------------------
             register: async (formData) => {
                 set({ isLoading: true, error: null })
 
                 try {
-                    const { name, email, password, role } = formData
+                    // Split full name
+                    const [first_name, ...rest] = formData.name.split(" ")
+                    const last_name = rest.join(" ") || ""
 
-                    // Split full name into first + last
-                    const [first_name, ...lastParts] = name.trim().split(" ")
-                    const last_name = lastParts.join(" ") || ""
-
+                    // Base payload
                     const payload = {
                         first_name,
                         last_name,
-                        email,
-                        password,
-                        role: role.toLowerCase()   // backend expects lowercase
+                        email: formData.email,
+                        password: formData.password,
+                        role: formData.role,
+                    }
+
+                    // Doctor-only fields
+                    if (formData.role === "doctor") {
+                        payload.license_number = formData.license_number
+                        payload.specialization = formData.specialization || null
                     }
 
                     await axios.post(`${API_BASE_URL}/auth/register`, payload)
@@ -74,8 +84,9 @@ export const useAuthStore = create(
                 }
             },
 
-
-            // Logout
+            // -------------------------------
+            // LOGOUT
+            // -------------------------------
             logout: () => {
                 set({
                     user: null,
@@ -85,7 +96,9 @@ export const useAuthStore = create(
                 delete axios.defaults.headers.common['Authorization']
             },
 
-            // Load user from localStorage
+            // -------------------------------
+            // LOAD USER
+            // -------------------------------
             loadUser: () => {
                 const token = localStorage.getItem('accessToken')
                 if (token) {
@@ -93,7 +106,9 @@ export const useAuthStore = create(
                 }
             },
 
-            // Change password
+            // -------------------------------
+            // CHANGE PASSWORD
+            // -------------------------------
             changePassword: async (currentPassword, newPassword) => {
                 try {
                     await axios.post(`${API_BASE_URL}/auth/change-password`, {
@@ -102,7 +117,9 @@ export const useAuthStore = create(
                     })
                     return true
                 } catch (error) {
-                    set({ error: error.response?.data?.error || 'Failed to change password' })
+                    set({
+                        error: error.response?.data?.error || 'Failed to change password'
+                    })
                     return false
                 }
             }

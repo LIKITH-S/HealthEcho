@@ -1,73 +1,82 @@
-import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { useAuthStore } from '../store/authStore'
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuthStore } from '../store/authStore';
 
 function RegisterPage() {
-  const navigate = useNavigate()
-  const { register } = useAuthStore()
+  const navigate = useNavigate();
+  const { register } = useAuthStore();
 
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [success, setSuccess] = useState(null)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'patient',
-  })
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "patient",
+    license_number: "",
+    specialization: ""
+  });
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
-    setLoading(true)
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
 
-    // Validation
+    // Basic validation
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError('All fields are required.')
-      setLoading(false)
-      return
+      setError("All fields are required.");
+      setLoading(false);
+      return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match.')
-      setLoading(false)
-      return
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
     }
 
     // Strong password validation
-    const strongPass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/
+    const strongPass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
     if (!strongPass.test(formData.password)) {
-      setError('Password must contain uppercase, lowercase, number & special character and be 8+ characters long.')
-      setLoading(false)
-      return
+      setError("Password must contain uppercase, lowercase, number & special character and be 8+ characters long.");
+      setLoading(false);
+      return;
+    }
+
+    // Doctor fields validation
+    if (formData.role === "doctor" && !formData.license_number) {
+      setError("License number is required for doctors.");
+      setLoading(false);
+      return;
     }
 
     try {
-      const success = await register(formData)
+      const success = await register(formData);
 
       if (success) {
-        setSuccess('Registration successful! Redirecting to login...')
-        setTimeout(() => navigate('/login'), 2000)
+        setSuccess("Registration successful! Redirecting to login...");
+        setTimeout(() => navigate("/login"), 2000);
       } else {
-        setError('Registration failed. Email may already be in use.')
+        setError("Registration failed. Email may already be in use.");
       }
     } catch (err) {
-      setError(err.message || 'An error occurred during registration.')
+      setError(err.message || "An error occurred during registration.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
@@ -120,6 +129,35 @@ function RegisterPage() {
             </select>
           </div>
 
+          {/* Doctor Fields */}
+          {formData.role === "doctor" && (
+            <>
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">License Number</label>
+                <input
+                  type="text"
+                  name="license_number"
+                  value={formData.license_number}
+                  onChange={handleChange}
+                  placeholder="Enter your license number"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">Specialization (optional)</label>
+                <input
+                  type="text"
+                  name="specialization"
+                  value={formData.specialization}
+                  onChange={handleChange}
+                  placeholder="e.g., Cardiology, Dermatology"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+            </>
+          )}
+
           {/* Password */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">Password</label>
@@ -146,20 +184,20 @@ function RegisterPage() {
             />
           </div>
 
-          {/* Register Button */}
+          {/* Button */}
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition"
           >
-            {loading ? 'Registering...' : 'Register'}
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
-        {/* Login Redirect */}
+        {/* Login Link */}
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">
               Login here
             </Link>
@@ -167,7 +205,7 @@ function RegisterPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default RegisterPage
+export default RegisterPage;
