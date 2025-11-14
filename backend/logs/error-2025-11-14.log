@@ -19,3 +19,5 @@
 {"timestamp":"2025-11-14T18:56:31.824Z","level":"ERROR","message":"Failed to send email","email":"test@gmail.com","error":"94B70000:error:0A00010B:SSL routines:tls_validate_record_header:wrong version number:openssl\\ssl\\record\\methods\\tlsany_meth.c:85:\n"}
 {"timestamp":"2025-11-14T20:09:20.696Z","level":"ERROR","message":{}}
 {"timestamp":"2025-11-14T20:37:37.203Z","level":"ERROR","message":{"length":126,"name":"error","severity":"ERROR","code":"42703","position":"21","file":"analyze.c","line":"2581","routine":"transformUpdateTargetList"}}
+{"timestamp":"2025-11-14T21:17:02.560Z","level":"ERROR","message":{"length":126,"name":"error","severity":"ERROR","code":"42703","position":"21","file":"analyze.c","line":"2581","routine":"transformUpdateTargetList"}}
+{"timestamp":"2025-11-14T21:26:09.379Z","level":"ERROR","message":{"length":126,"name":"error","severity":"ERROR","code":"42703","position":"21","file":"analyze.c","line":"2581","routine":"transformUpdateTargetList"}}
