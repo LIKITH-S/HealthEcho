@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 
-function ChatbotUI() {
+function ChatbotUI({ showHeader = true }) {
     const [messages, setMessages] = useState([
-        { id: 1, text: 'Hello! I\'m HealthEcho. How can I assist you today?', sender: 'bot' }
+        { id: 1, text: "Hello! I'm HealthEcho. How can I assist you today?", sender: 'bot' }
     ])
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
@@ -21,9 +21,8 @@ function ChatbotUI() {
         e.preventDefault()
         if (!input.trim()) return
 
-        // Add user message
-        const userMessage = { id: messages.length + 1, text: input, sender: 'user' }
-        setMessages([...messages, userMessage])
+        const userMessage = { id: Date.now(), text: input, sender: 'user' }
+        setMessages((prev) => [...prev, userMessage])
         setInput('')
         setLoading(true)
 
@@ -34,8 +33,8 @@ function ChatbotUI() {
             })
 
             const botMessage = {
-                id: messages.length + 2,
-                text: response.data.message,
+                id: Date.now() + 1,
+                text: response?.data?.message || 'Sorry, no response.',
                 sender: 'bot'
             }
 
@@ -43,22 +42,24 @@ function ChatbotUI() {
         } catch (error) {
             console.error('Chatbot error:', error)
             const errorMessage = {
-                id: messages.length + 2,
+                id: Date.now() + 2,
                 text: 'Sorry, I encountered an error. Please try again.',
                 sender: 'bot'
             }
             setMessages((prev) => [...prev, errorMessage])
+        } finally {
+            setLoading(false)
         }
-
-        setLoading(false)
     }
 
     return (
         <div className="bg-white rounded-lg shadow flex flex-col h-96">
-            {/* Header */}
-            <div className="bg-indigo-600 text-white p-4 rounded-t-lg">
-                <h3 className="font-semibold">💬 HealthEcho Assistant</h3>
-            </div>
+            {/* Header (optional) */}
+            {showHeader && (
+                <div className="bg-indigo-600 text-white p-4 rounded-t-lg">
+                    <h3 className="font-semibold">💬 HealthEcho Assistant</h3>
+                </div>
+            )}
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -69,8 +70,8 @@ function ChatbotUI() {
                     >
                         <div
                             className={`max-w-xs px-4 py-2 rounded-lg ${msg.sender === 'user'
-                                    ? 'bg-indigo-600 text-white'
-                                    : 'bg-gray-200 text-gray-800'
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-gray-200 text-gray-800'
                                 }`}
                         >
                             {msg.text}

@@ -4,7 +4,10 @@ RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO audit_logs (user_id, action, resource_type, resource_id, status, timestamp)
   VALUES (
-    CURRENT_SETTING('app.current_user_id')::UUID,
+    CASE
+      WHEN current_setting('app.current_user_id', true) IS NULL OR current_setting('app.current_user_id', true) = '' THEN NULL
+      ELSE current_setting('app.current_user_id')::UUID
+    END,
     TG_ARGV[0],
     TG_TABLE_NAME,
     NEW.id,
