@@ -1,68 +1,80 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import PatientsList from './PatientsList'
 import EmergencySOSPanel from './EmergencySOSPanel'
 import AddPatientDetails from './AddPatientDetails'
+import ContactManagement from './ContactManagement'
+import HospitalLocationShare from './HospitalLocationShare'
+import UploadPatientReport from './UploadPatientReport'
+import axios from 'axios'
 
 function DoctorDashboard() {
-    const [activeTab, setActiveTab] = useState('patients')
-    const [patients, setPatients] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [selectedPatient, setSelectedPatient] = useState(null)
+    const [activeTab, setActiveTab] = useState('patients');
+    const [patients, setPatients] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedPatient, setSelectedPatient] = useState(null);
 
     useEffect(() => {
-        fetchPatients()
-    }, [])
+        fetchPatients();
+    }, []);
 
     const fetchPatients = async () => {
         try {
-            const response = await axios.get('/api/doctor/patients')
-            setPatients(response.data.patients)
-            setLoading(false)
+            const response = await axios.get('/api/doctor/patients');
+            setPatients(response.data.patients);
+            setLoading(false);
         } catch (error) {
-            console.error('Failed to fetch patients:', error)
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     return (
-        <div className="space-y-6">
-            {/* Tabs */}
-            <div className="flex space-x-4 border-b bg-white p-4 rounded-lg">
-                {['patients', 'emergency', 'details'].map((tab) => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`py-2 px-4 font-semibold border-b-2 transition ${activeTab === tab
-                                ? 'border-indigo-600 text-indigo-600'
-                                : 'border-transparent text-gray-600 hover:text-gray-900'
-                            }`}
-                    >
-                        {tab === 'patients' && '👥 Patients'}
-                        {tab === 'emergency' && '🚨 Emergency'}
-                        {tab === 'details' && '📝 Add Details'}
-                    </button>
-                ))}
+        <div className="min-h-screen bg-gray-50">
+            <div className="w-full flex flex-wrap space-x-4 border-b bg-white p-4 rounded-lg mt-2">
+                <button
+                    className={`py-2 px-4 font-semibold border-b-2 transition
+            ${activeTab === 'patients' ? 'border-purple-700 text-purple-700' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                    onClick={() => setActiveTab('patients')}
+                >
+                    + New Patient
+                </button>
+                <button
+                    className={`py-2 px-4 font-semibold border-b-2 transition
+            ${activeTab === 'contacts' ? 'border-purple-700 text-purple-700' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                    onClick={() => setActiveTab('contacts')}
+                >
+                    Contacts
+                </button>
+                <button
+                    className={`py-2 px-4 font-semibold border-b-2 transition
+            ${activeTab === 'emergency' ? 'border-purple-700 text-purple-700' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                    onClick={() => setActiveTab('emergency')}
+                >
+                    Emergency SOS
+                </button>
+                <button
+                    className={`py-2 px-4 font-semibold border-b-2 transition
+            ${activeTab === 'upload' ? 'border-purple-700 text-purple-700' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                    onClick={() => setActiveTab('upload')}
+                >
+                    Upload Report
+                </button>
+                <button
+                    className={`py-2 px-4 font-semibold border-b-2 transition
+            ${activeTab === 'location' ? 'border-purple-700 text-purple-700' : 'border-transparent text-gray-600 hover:text-gray-900'}`}
+                    onClick={() => setActiveTab('location')}
+                >
+                    Share Hospital Location
+                </button>
             </div>
-
-            {/* Content */}
-            <div>
-                {activeTab === 'patients' && (
-                    <PatientsList
-                        patients={patients}
-                        loading={loading}
-                        onSelectPatient={setSelectedPatient}
-                    />
-                )}
-                {activeTab === 'emergency' && selectedPatient && (
-                    <EmergencySOSPanel patient={selectedPatient} />
-                )}
-                {activeTab === 'details' && selectedPatient && (
-                    <AddPatientDetails patient={selectedPatient} />
-                )}
+            <div className="max-w-4xl mx-auto mt-6">
+                {activeTab === 'patients' && <AddPatientDetails patient={{}} />}
+                {activeTab === 'contacts' && <ContactManagement />}
+                {activeTab === 'emergency' && <EmergencySOSPanel patient={selectedPatient || {}} />}
+                {activeTab === 'upload' && <UploadPatientReport />}
+                {activeTab === 'location' && <HospitalLocationShare />}
             </div>
         </div>
-    )
+    );
 }
 
-export default DoctorDashboard
+export default DoctorDashboard;
