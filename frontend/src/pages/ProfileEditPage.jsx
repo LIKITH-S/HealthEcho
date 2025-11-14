@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import api from '../services/api'
 import Header from '../components/Common/Header'
 import axios from 'axios'
 
 const ProfileEditPage = () => {
-    // Fetch user and token for authentication
-    const { user, token } = useAuthStore()
+    // Fetch user from store; use shared `api` instance for requests (it reads token from localStorage)
+    const { user } = useAuthStore()
     const navigate = useNavigate()
 
     // Set up initial form state
@@ -39,9 +40,8 @@ const ProfileEditPage = () => {
         setSuccess(false)
 
         try {
-            await axios.put('/api/patient/profile', formData, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
+            // use the shared API client which automatically attaches Authorization
+            await api.put('/patient/profile', formData)
 
             setSuccess(true)
             setTimeout(() => {

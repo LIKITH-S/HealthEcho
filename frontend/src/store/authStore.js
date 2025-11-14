@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:5000/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 export const useAuthStore = create(
     persist(
@@ -33,6 +33,10 @@ export const useAuthStore = create(
                         refreshToken: tokens.refreshToken,
                         isLoading: false
                     })
+
+                    // Persist tokens in localStorage so the shared `api` client can read them
+                    localStorage.setItem('accessToken', tokens.accessToken)
+                    localStorage.setItem('refreshToken', tokens.refreshToken)
 
                     axios.defaults.headers.common['Authorization'] = `Bearer ${tokens.accessToken}`
                     return true
@@ -94,6 +98,8 @@ export const useAuthStore = create(
                     refreshToken: null
                 })
                 delete axios.defaults.headers.common['Authorization']
+                localStorage.removeItem('accessToken')
+                localStorage.removeItem('refreshToken')
             },
 
             // -------------------------------
@@ -103,6 +109,8 @@ export const useAuthStore = create(
                 const token = localStorage.getItem('accessToken')
                 if (token) {
                     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+                    // hydrate store values from persisted storage if available
+                    set({ accessToken: token, refreshToken: localStorage.getItem('refreshToken') })
                 }
             },
 
@@ -134,3 +142,11 @@ export const useAuthStore = create(
         }
     )
 )
+
+// Hydrate tokens into axios defaults on module load so API requests include Authorization
+try {
+    // call loadUser to set axios default header and in-memory store values
+    useAuthStore.getState().loadUser()
+} catch (err) {
+    // ignore - allows the module to be imported in non-browser contexts
+}
