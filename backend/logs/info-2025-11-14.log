@@ -1,0 +1,12 @@
+{"timestamp":"2025-11-14T00:44:06.343Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T00:54:11.113Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T01:07:17.636Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T01:18:11.639Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T01:18:14.494Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T01:18:24.665Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T01:22:28.931Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T02:36:51.375Z","level":"INFO","message":"User registered successfully","email":"likithinnote1@gmail.com","role":"patient"}
+{"timestamp":"2025-11-14T02:37:03.201Z","level":"INFO","message":"User logged in successfully","email":"likithinnote1@gmail.com","role":"patient"}
+{"timestamp":"2025-11-14T04:18:59.354Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T04:19:28.681Z","level":"INFO","message":"User logged in successfully","email":"likithinnote1@gmail.com","role":"patient"}
+{"timestamp":"2025-11-14T04:21:49.775Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}

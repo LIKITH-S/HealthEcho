@@ -43,11 +43,26 @@ export const useAuthStore = create(
                 }
             },
 
-            // Register
             register: async (formData) => {
                 set({ isLoading: true, error: null })
+
                 try {
-                    await axios.post(`${API_BASE_URL}/auth/register`, formData)
+                    const { name, email, password, role } = formData
+
+                    // Split full name into first + last
+                    const [first_name, ...lastParts] = name.trim().split(" ")
+                    const last_name = lastParts.join(" ") || ""
+
+                    const payload = {
+                        first_name,
+                        last_name,
+                        email,
+                        password,
+                        role: role.toLowerCase()   // backend expects lowercase
+                    }
+
+                    await axios.post(`${API_BASE_URL}/auth/register`, payload)
+
                     set({ isLoading: false })
                     return true
                 } catch (error) {
@@ -58,6 +73,7 @@ export const useAuthStore = create(
                     return false
                 }
             },
+
 
             // Logout
             logout: () => {

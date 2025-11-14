@@ -3,4 +3,7 @@ Flask-CORS==4.0.0
 python-dotenv==1.0.0
 transformers==4.30.0
 torch==2.0.0
-google-cloud-translate==3.11.0
+google-api-core
+google-cloud-translate>=3.0.0,<3.9.0
+tokenizers>=0.13.3
+

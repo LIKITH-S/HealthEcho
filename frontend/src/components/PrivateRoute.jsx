@@ -6,11 +6,11 @@ function PrivateRoute({ children, requiredRole }) {
     const { user } = useAuthStore()
 
     if (!user) {
-        return <Navigate to="/login" />
+        return <Navigate to="/login" replace />
     }
 
     if (requiredRole && user.role !== requiredRole) {
-        return <Navigate to="/login" />
+        return <Navigate to="/login" replace />
     }
 
     return children

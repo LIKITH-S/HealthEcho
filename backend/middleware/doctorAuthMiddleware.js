@@ -1,7 +1,28 @@
-const { authorize } = require('./rbacMiddleware');
 
-const verifyDoctorRole = authorize('manage_patients');
+const doctorAuthMiddleware = (req, res, next) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not authenticated'
+            });
+        }
 
-module.exports = {
-    verifyDoctorRole
+        if (req.user.role !== 'doctor') {
+            return res.status(403).json({
+                success: false,
+                message: 'Only doctors can access this resource'
+            });
+        }
+
+        next();
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Authorization error',
+            error: error.message
+        });
+    }
 };
+
+module.exports = doctorAuthMiddleware;
