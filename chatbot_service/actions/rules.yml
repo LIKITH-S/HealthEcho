@@ -1,0 +1,95 @@
+version: "3.1"
+
+rules:
+
+- rule: Greet
+  steps:
+    - intent: greet
+    - action: utter_greet
+
+- rule: Goodbye
+  steps:
+    - intent: goodbye
+    - action: utter_goodbye
+
+- rule: How are you
+  steps:
+    - intent: ask_howareyou
+    - action: utter_howareyou
+
+- rule: Thank you
+  steps:
+    - intent: thankyou
+    - action: utter_thankyou
+
+- rule: Identity
+  steps:
+    - intent: bot_identity
+    - action: utter_bot_identity
+
+- rule: Creator
+  steps:
+    - intent: bot_creator
+    - action: utter_bot_creator
+
+- rule: Compliments
+  steps:
+    - intent: compliments
+    - action: utter_compliments
+
+- rule: Happy mood
+  steps:
+    - intent: mood_happy
+    - action: utter_mood_happy
+
+- rule: Sad mood
+  steps:
+    - intent: mood_unhappy
+    - action: utter_mood_unhappy
+
+- rule: Yes response
+  steps:
+    - intent: yes
+    - action: utter_yes
+
+- rule: No response
+  steps:
+    - intent: no
+    - action: utter_no
+
+- rule: Chitchat
+  steps:
+    - intent: chitchat
+    - action: utter_chitchat
+
+- rule: Jokes
+  steps:
+    - intent: joke
+    - action: utter_joke
+
+- rule: Out of Scope Rule
+  steps:
+    - intent: out_of_scope
+    - action: utter_out_of_scope
+
+
+- rule: Medication lookup
+  steps:
+    - intent: medication_question
+    - action: action_medication_lookup
+
+- rule: Symptom checker
+  steps:
+    - intent: symptom_question
+    - action: action_symptom_checker
+
+- rule: Emergency
+  steps:
+    - intent: emergency
+    - action: action_emergency_protocol
+    
+- rule: Fallback
+  steps:
+    - intent: nlu_fallback
+    - action: utter_out_of_scope
+

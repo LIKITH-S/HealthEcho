@@ -1,0 +1,96 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - ask_howareyou
+  - chitchat
+  - thankyou
+  - bot_identity
+  - bot_creator
+  - compliments
+  - mood_happy
+  - mood_unhappy
+  - yes
+  - no
+  - joke
+  - medication_question
+  - symptom_question
+  - emergency
+  - out_of_scope
+  - nlu_fallback
+
+entities:
+  - medication
+  - symptom
+
+slots:
+  medication:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: medication
+
+  symptom:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: symptom
+
+
+responses:
+
+  utter_greet:
+    - text: "Hello! How can I help you today?"
+
+  utter_goodbye:
+    - text: "Goodbye! Take care 😊"
+
+  utter_howareyou:
+    - text: "I'm doing great! How can I help you today?"
+
+  utter_thankyou:
+    - text: "You're welcome! Happy to help."
+
+  utter_bot_identity:
+    - text: "I'm your Health Assistant bot created to help with both medical assistance and normal chat."
+
+  utter_bot_creator:
+    - text: "I am a chatbot which help you in health related issues, created by the Healthecho team."
+
+  utter_compliments:
+    - text: "Thank you! You're kind 😊"
+
+  utter_mood_happy:
+    - text: "That's awesome! Glad to hear that!"
+
+  utter_mood_unhappy:
+    - text: "I'm sorry you're feeling this way. I'm here if you want to talk."
+
+  utter_yes:
+    - text: "Great! Let's continue."
+
+  utter_no:
+    - text: "Alright, no problem."
+
+  utter_chitchat:
+    - text: "Hmm, interesting! Tell me more."
+
+  utter_joke:
+    - text: "Why don’t programmers get sick? Because they avoid bugs! 😂"
+
+  utter_ask_medication:
+    - text: "Please tell me the medication name."
+
+  utter_ask_symptom:
+    - text: "Can you describe your symptom more clearly?"
+
+  utter_out_of_scope:
+    - text: "I'm designed to answer health-related questions only."
+
+actions:
+  - action_medication_lookup
+  - action_symptom_checker
+  - action_emergency_protocol

@@ -1,0 +1,122 @@
+version: "3.1"
+
+nlu:
+
+- intent: greet
+  examples: |
+    - hi
+    - hello
+    - hey
+    - hello there
+    - hi bot
+
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye
+    - see you
+    - take care
+
+- intent: ask_howareyou
+  examples: |
+    - how are you?
+    - how are you doing?
+    - how's everything?
+
+- intent: thankyou
+  examples: |
+    - thank you
+    - thanks
+    - thanks a lot
+
+- intent: bot_identity
+  examples: |
+    - who are you?
+    - what are you?
+    - what can you do?
+
+- intent: bot_creator
+  examples: |
+    - who created you?
+    - who made you?
+    - who built you?
+
+- intent: compliments
+  examples: |
+    - you're awesome
+    - good bot
+    - you're smart
+
+- intent: mood_happy
+  examples: |
+    - I'm happy
+    - I feel good
+    - I'm excited
+
+- intent: mood_unhappy
+  examples: |
+    - I'm sad
+    - I feel bad
+    - I'm upset
+    - I'm depressed
+
+- intent: yes
+  examples: |
+    - yes
+    - yup
+    - sure
+
+- intent: no
+  examples: |
+    - no
+    - nope
+    - not really
+
+- intent: chitchat
+  examples: |
+    - okay
+    - hmm
+    - interesting
+    - really?
+
+- intent: joke
+  examples: |
+    - tell me a joke
+    - make me laugh
+    - say something funny
+
+- intent: medication_question
+  examples: |
+    - what are the side effects of [aspirin](medication)?
+    - tell me the side effects of [paracetamol](medication)
+    - is [ibuprofen](medication) safe?
+    - what does [aspirin](medication) do?
+    - explain [paracetamol](medication)
+
+
+- intent: symptom_question
+  examples: |
+    - I have [fever](symptom)
+    - I feel [headache](symptom)
+    - I have [nausea](symptom)
+
+- intent: emergency
+  examples: |
+    - this is an emergency
+    - help immediately
+    - someone collapsed
+
+- intent: out_of_scope
+  examples: |
+    - who is the president of india?
+    - what is 2 + 2?
+    - tell me a joke about cars
+    - show me memes
+    - who won the cricket match?
+    - tell me about football
+    - what is the capital of france?
+    - who is narendra modi?
+    - what is your age?
+    - who is your owner?
+    - tell me about ai
+    - what is your name?
