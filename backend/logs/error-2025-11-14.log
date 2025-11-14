@@ -17,3 +17,5 @@
 {"timestamp":"2025-11-14T06:51:45.080Z","level":"ERROR","message":"Failed to send email","email":"siddharth56k@gmail.com","error":"C8060000:error:0A00010B:SSL routines:ssl3_get_record:wrong version number:c:\\ws\\deps\\openssl\\openssl\\ssl\\record\\ssl3_record.c:355:\n"}
 {"timestamp":"2025-11-14T07:50:37.299Z","level":"ERROR","message":"Failed to send email","email":"siddharth56k@email.com","error":"C8060000:error:0A00010B:SSL routines:ssl3_get_record:wrong version number:c:\\ws\\deps\\openssl\\openssl\\ssl\\record\\ssl3_record.c:355:\n"}
 {"timestamp":"2025-11-14T18:56:31.824Z","level":"ERROR","message":"Failed to send email","email":"test@gmail.com","error":"94B70000:error:0A00010B:SSL routines:tls_validate_record_header:wrong version number:openssl\\ssl\\record\\methods\\tlsany_meth.c:85:\n"}
+{"timestamp":"2025-11-14T20:09:20.696Z","level":"ERROR","message":{}}
+{"timestamp":"2025-11-14T20:37:37.203Z","level":"ERROR","message":{"length":126,"name":"error","severity":"ERROR","code":"42703","position":"21","file":"analyze.c","line":"2581","routine":"transformUpdateTargetList"}}

@@ -4,7 +4,6 @@ const { logAuditEvent } = require('../security/audit');
 const authenticate = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
-
         if (!token) {
             await logAuditEvent(null, 'AUTH_FAILED', 'auth', null, 'failed', { reason: 'No token provided' });
             return res.status(401).json({ error: 'Access token required' });
@@ -22,17 +21,9 @@ const authenticate = async (req, res, next) => {
 const optionalAuth = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
-        if (token) {
-            const decoded = verifyAccessToken(token);
-            req.user = decoded;
-        }
-    } catch (error) {
-        // Silently fail for optional auth
-    }
+        if (token) req.user = verifyAccessToken(token);
+    } catch { }
     next();
 };
 
-module.exports = {
-    authenticate,
-    optionalAuth
-};
+module.exports = { authenticate, optionalAuth };
