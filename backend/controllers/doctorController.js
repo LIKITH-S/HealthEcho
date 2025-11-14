@@ -1,7 +1,9 @@
 const db = require('../config/db');
+const bcrypt = require("bcrypt");
 const { logAuditEvent } = require('../security/audit');
 const { triggerEmergencyAlert } = require('../utils/emergencyAlertService');
 const logger = require('../utils/logger');
+const { User, Patient, user } = require("../models");
 
 // Get doctor's profile
 const getDoctorProfile = async (req, res) => {
@@ -264,6 +266,126 @@ const triggerEmergencySOS = async (req, res) => {
         res.status(500).json({ error: 'Failed to trigger emergency' });
     }
 };
+exports.createPatient = async (req, res) => {
+    try {
+        // derive logged-in user's id from token payload
+        const userIdFromToken = req.user?.userId || req.user?.id;
+
+        // find doctor's internal id from doctors table
+        const doctorRow = await db.query(`SELECT id FROM doctors WHERE user_id = $1`, [userIdFromToken]);
+        if (doctorRow.rows.length === 0) {
+            return res.status(403).json({ error: 'Doctor profile not found for authenticated user' });
+        }
+        const doctorId = doctorRow.rows[0].id;
+        const {
+            first_name,
+            last_name,
+            email,
+            phone_number,
+            blood_type,
+            password
+        } = req.body;
+
+        // 1. Create user
+        const hashed = await bcrypt.hash(password, 10);
+        const userResult = await db.query(
+            `INSERT INTO users (email, password_hash, role, first_name, last_name, is_verified, is_active)
+       VALUES ($1,$2,'patient',$3,$4,true,true)
+       RETURNING id`,
+            [email, hashed, first_name, last_name]
+        );
+
+        const userId = userResult.rows[0].id;
+
+        // 2. Create patient profile
+        const patientResult = await db.query(
+            `INSERT INTO patients (user_id, phone_number, blood_type)
+       VALUES ($1,$2,$3)
+       RETURNING id`,
+            [userId, phone_number, blood_type]
+        );
+
+        const patientId = patientResult.rows[0].id;
+
+        // 3. Assign patient to doctor
+        await db.query(
+            `INSERT INTO doctor_patient_relationships (doctor_id, patient_id)
+       VALUES ($1,$2)`,
+            [doctorId, patientId]
+        );
+
+        res.json({ success: true, patient_id: patientId });
+
+    } catch (err) {
+        console.error("Create patient error:", err);
+        res.status(400).json({ error: err.message || "Failed to create patient" });
+    }
+};
+
+
+exports.addExistingPatient = async (req, res) => {
+    try {
+        const { email } = req.body;
+        // derive logged-in user's id from token payload
+        const userIdFromToken = req.user?.userId || req.user?.id;
+
+        // resolve doctor internal id from doctors table
+        const doctorRow = await db.query(`SELECT id FROM doctors WHERE user_id = $1`, [userIdFromToken]);
+        if (doctorRow.rows.length === 0) {
+            return res.status(403).json({ error: 'Doctor profile not found for authenticated user' });
+        }
+        const doctor_id = doctorRow.rows[0].id;
+
+        // 1. Check if user exists and is patient
+        const user = await db.query(
+            `SELECT id, role FROM users WHERE email = $1`,
+            [email]
+        );
+
+        if (user.rows.length === 0 || user.rows[0].role !== 'patient') {
+            return res.status(404).json({ error: "Patient not found" });
+        }
+
+        const user_id = user.rows[0].id;
+
+        // 2. Get patient table ID
+        const patient = await db.query(
+            `SELECT id FROM patients WHERE user_id = $1`,
+            [user_id]
+        );
+
+        if (patient.rows.length === 0) {
+            return res.status(404).json({ error: "Patient profile does not exist" });
+        }
+
+        const patient_id = patient.rows[0].id;
+
+        // 3. Check if already linked
+        const exists = await db.query(
+            `SELECT id FROM doctor_patient_relationships WHERE doctor_id = $1 AND patient_id = $2`,
+            [doctor_id, patient_id]
+        );
+
+        if (exists.rows.length > 0) {
+            return res.status(400).json({ error: "Patient already linked to doctor" });
+        }
+
+        // 4. Insert new relationship
+        await db.query(
+            `INSERT INTO doctor_patient_relationships (doctor_id, patient_id, created_at)
+             VALUES ($1, $2, NOW())`,
+            [doctor_id, patient_id]
+        );
+
+        return res.json({ message: "Patient added to doctor's list successfully" });
+
+    } catch (err) {
+        console.error("Add Existing Patient Error:", err);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+
 
 // Get emergency SOS history
 const getSOSHistory = async (req, res) => {
@@ -304,5 +426,7 @@ module.exports = {
     addPatientDetails,
     uploadReportForPatient,
     triggerEmergencySOS,
-    getSOSHistory
+    getSOSHistory,
+    createPatient: exports.createPatient,
+    addExistingPatient: exports.addExistingPatient
 };
