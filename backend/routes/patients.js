@@ -11,7 +11,11 @@ const { validateReportUpload, handleValidationErrors } = require('../middleware/
 
 router.use(authenticate);
 router.use(authorize('view_own_profile'));
+router.get('/profile', auth, patientController.getProfile);
+router.put('/profile', patientAuth, patientController.updateProfile);
 
+// Minimal Info
+router.get('/me', patientAuth, patientController.getMe);
 // Report routes
 router.post('/reports/upload', uploadLimiter, upload.single('report'), validateReportUpload, handleValidationErrors, reportController.uploadReport);
 router.get('/reports', reportController.getPatientReports);
