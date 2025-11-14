@@ -24,12 +24,60 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const userId = req.user?.userId || req.user?.id;
-        const { first_name, last_name, age, gender, address } = req.body;
 
-        await User.update({ first_name, last_name }, { where: { id: userId } });
-        await Patient.update({ age, gender, address }, { where: { user_id: userId } });
+        // Allowed user fields to update
+        const userFields = [
+            'first_name',
+            'last_name',
+            'phone_number',
+            'profile_picture_url',
+            'is_verified',
+            'is_active'
+        ];
 
-        res.json({ success: true, message: "Profile updated successfully" });
+        // Allowed patient fields to update
+        const patientFields = [
+            'date_of_birth',
+            'age',
+            'gender',
+            'blood_type',
+            'emergency_contact_name',
+            'emergency_contact_phone',
+            'assigned_doctor_id',
+            'medical_history',
+            'allergies',
+            'chronic_conditions',
+            'encrypted_fields'
+        ];
+
+        const payload = req.body || {};
+
+        const userUpdate = {};
+        userFields.forEach((f) => {
+            if (Object.prototype.hasOwnProperty.call(payload, f)) userUpdate[f] = payload[f];
+        });
+
+        const patientUpdate = {};
+        patientFields.forEach((f) => {
+            if (Object.prototype.hasOwnProperty.call(payload, f)) patientUpdate[f] = payload[f];
+        });
+
+        // Apply updates if any
+        if (Object.keys(userUpdate).length > 0) {
+            await User.update(userUpdate, { where: { id: userId } });
+        }
+
+        if (Object.keys(patientUpdate).length > 0) {
+            await Patient.update(patientUpdate, { where: { user_id: userId } });
+        }
+
+        // Return refreshed user + patient
+        const updated = await User.findByPk(userId, {
+            attributes: { exclude: ['password'] },
+            include: [{ model: Patient }]
+        });
+
+        res.json({ success: true, data: updated });
     } catch (error) {
         logger.error(error);
         res.status(500).json({ error: "Unable to update profile" });

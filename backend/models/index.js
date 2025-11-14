@@ -3,6 +3,16 @@ const db = require('../config/db');
 // Minimal model shim to provide the methods controllers expect.
 // This avoids requiring a full ORM setup and uses the existing `db.query`.
 
+// helper: cache table columns to avoid trying to update non-existent columns
+const _tableColumnsCache = {};
+const getTableColumns = async (tableName) => {
+	if (_tableColumnsCache[tableName]) return _tableColumnsCache[tableName];
+	const res = await db.query(`SELECT column_name FROM information_schema.columns WHERE table_name = $1`, [tableName]);
+	const cols = res.rows.map((r) => r.column_name);
+	_tableColumnsCache[tableName] = new Set(cols);
+	return _tableColumnsCache[tableName];
+};
+
 const User = {
 	findByPk: async (id, options = {}) => {
 		if (!id) return null;
@@ -37,8 +47,13 @@ const User = {
 		const id = where.id;
 		if (!id) throw new Error('User.update requires where.id');
 
-		const fields = Object.keys(values).filter((k) => values[k] !== undefined);
-		if (fields.length === 0) return;
+		const tableCols = await getTableColumns('users');
+
+		const fields = Object.keys(values).filter((k) => values[k] !== undefined && tableCols.has(k));
+		if (fields.length === 0) {
+			// nothing to update (either no values or none match table columns)
+			return;
+		}
 
 		const sets = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
 		const params = fields.map((f) => values[f]);
@@ -55,7 +70,9 @@ const Patient = {
 		const userId = where.user_id || where.userId;
 		if (!userId) throw new Error('Patient.update requires where.user_id');
 
-		const fields = Object.keys(values).filter((k) => values[k] !== undefined);
+		const tableCols = await getTableColumns('patients');
+
+		const fields = Object.keys(values).filter((k) => values[k] !== undefined && tableCols.has(k));
 		if (fields.length === 0) return;
 
 		const sets = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
