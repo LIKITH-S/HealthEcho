@@ -23,3 +23,9 @@
 {"timestamp":"2025-11-14T06:52:01.701Z","level":"INFO","message":"User logged in successfully","email":"siddharth56k@gmail.com","role":"patient"}
 {"timestamp":"2025-11-14T07:50:37.332Z","level":"INFO","message":"User registered successfully","email":"siddharth56k@email.com","role":"doctor"}
 {"timestamp":"2025-11-14T07:51:00.787Z","level":"INFO","message":"User logged in successfully","email":"siddharth56k@email.com","role":"doctor"}
+{"timestamp":"2025-11-14T07:59:31.251Z","level":"INFO","message":"User logged in successfully","email":"siddharth56k@email.com","role":"doctor"}
+{"timestamp":"2025-11-14T08:46:29.934Z","level":"INFO","message":"User logged in successfully","email":"siddharth56k@gmail.com","role":"patient"}
+{"timestamp":"2025-11-14T09:01:49.112Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T09:04:13.758Z","level":"INFO","message":"✅ HealthEcho Backend running on port 5000"}
+{"timestamp":"2025-11-14T09:05:02.775Z","level":"INFO","message":"User logged in successfully","email":"siddharth56k@gmail.com","role":"patient"}
+{"timestamp":"2025-11-14T09:29:12.143Z","level":"INFO","message":"User logged in successfully","email":"siddharth56k@gmail.com","role":"patient"}
