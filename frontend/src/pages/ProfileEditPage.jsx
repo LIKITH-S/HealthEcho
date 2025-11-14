@@ -5,9 +5,11 @@ import Header from '../components/Common/Header'
 import axios from 'axios'
 
 const ProfileEditPage = () => {
-    const { user } = useAuthStore()
+    // Fetch user and token for authentication
+    const { user, token } = useAuthStore()
     const navigate = useNavigate()
 
+    // Set up initial form state
     const [formData, setFormData] = useState({
         first_name: user?.first_name || '',
         last_name: user?.last_name || '',
@@ -23,11 +25,13 @@ const ProfileEditPage = () => {
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(false)
 
+    // Handle form field changes
     const handleChange = (e) => {
         const { name, value } = e.target
         setFormData((prev) => ({ ...prev, [name]: value }))
     }
 
+    // Handle form submit for profile update
     const handleSubmit = async (e) => {
         e.preventDefault()
         setIsLoading(true)
@@ -35,7 +39,10 @@ const ProfileEditPage = () => {
         setSuccess(false)
 
         try {
-            await axios.post('/api/patient/update-profile', formData)
+            await axios.put('/api/patient/profile', formData, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
             setSuccess(true)
             setTimeout(() => {
                 navigate('/patient/dashboard')
@@ -47,6 +54,7 @@ const ProfileEditPage = () => {
         }
     }
 
+    // Handle cancel: return to previous page
     const handleCancel = () => {
         navigate(-1)
     }

@@ -35,8 +35,8 @@ function ReportUpload({ onUpload }) {
         <div
             {...getRootProps()}
             className={`p-8 border-2 border-dashed rounded-lg text-center cursor-pointer transition ${isDragActive
-                    ? 'border-indigo-600 bg-indigo-50'
-                    : 'border-gray-300 hover:border-indigo-600'
+                ? 'border-indigo-600 bg-indigo-50'
+                : 'border-gray-300 hover:border-indigo-600'
                 }`}
         >
             <input {...getInputProps()} />

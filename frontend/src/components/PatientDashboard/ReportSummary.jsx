@@ -48,8 +48,8 @@ function ReportSummary({ reports }) {
                                     <td className="px-4 py-3">{new Date(report.upload_date).toLocaleDateString()}</td>
                                     <td className="px-4 py-3">
                                         <span className={`px-3 py-1 rounded text-sm font-semibold ${report.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                report.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                                    'bg-gray-100 text-gray-800'
+                                            report.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                                                'bg-gray-100 text-gray-800'
                                             }`}>
                                             {report.status}
                                         </span>

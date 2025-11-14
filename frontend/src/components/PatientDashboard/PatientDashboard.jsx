@@ -1,23 +1,35 @@
-import React, { useState, useEffect } from 'react'
-import ReportUpload from './ReportUpload'
-import ReportSummary from './ReportSummary'
-import Recommendations from './Recommendations'
-import HealthInsightsDashboard from './HealthInsightsDashboard'
+import React, { useState, useEffect } from 'react';
+import ReportUpload from './ReportUpload';
+import ReportSummary from './ReportSummary';
+import Recommendations from './Recommendations';
+import HealthInsightsDashboard from './HealthInsightsDashboard';
 
 function PatientDashboard({ initialTab = 'overview', onTabChange }) {
-    const [activeTab, setActiveTab] = useState(initialTab)
-    const [reports, setReports] = useState([])
+    const [activeTab, setActiveTab] = useState(initialTab);
+    const [reports, setReports] = useState([]);
 
     useEffect(() => {
-        setActiveTab(initialTab)
-    }, [initialTab])
+        setActiveTab(initialTab);
+    }, [initialTab]);
 
     const handleTabClick = (tab) => {
-        setActiveTab(tab)
+        setActiveTab(tab);
         if (onTabChange) {
-            onTabChange(tab)
+            onTabChange(tab);
         }
-    }
+    };
+
+    // Allow image uploads by their extension only
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+    const handleReportUpload = (report) => {
+        if (!report) return;
+        const ext = report.name.split('.').pop().toLowerCase();
+        if (allowedExtensions.includes(ext)) {
+            setReports([...reports, report]);
+        } else {
+            alert('Please upload an image file (.jpg, .jpeg, .png, .gif, .bmp, .webp)');
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -38,23 +50,23 @@ function PatientDashboard({ initialTab = 'overview', onTabChange }) {
             </div>
 
             {/* Content */}
-            <div  >
+            <div>
                 {activeTab === 'overview' && <ReportSummary />}
-                {activeTab === 'upload' && <ReportUpload onUpload={(report) => setReports([...reports, report])} />}
+                {activeTab === 'upload' && (
+                    <ReportUpload onUpload={handleReportUpload} />
+                )}
                 {activeTab === 'reports' && <ReportSummary reports={reports} />}
                 {activeTab === 'insights' && <HealthInsightsDashboard />}
-            </div >
+            </div>
 
             {/* Recommendations */}
-            {
-                activeTab === 'overview' && (
-                    <div className="mt-8">
-                        <Recommendations />
-                    </div>
-                )
-            }
-        </div >
-    )
+            {activeTab === 'overview' && (
+                <div className="mt-8">
+                    <Recommendations />
+                </div>
+            )}
+        </div>
+    );
 }
 
-export default PatientDashboard
+export default PatientDashboard;
