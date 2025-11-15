@@ -45,7 +45,7 @@ const ProfileEditPage = () => {
 
             setSuccess(true)
             setTimeout(() => {
-                navigate('/patient/dashboard')
+                navigate('/patient-dashboard')
             }, 1500)
         } catch (err) {
             setError(err.response?.data?.error || 'Failed to update profile')
