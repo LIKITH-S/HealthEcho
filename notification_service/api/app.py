@@ -9,38 +9,32 @@ from handlers.emergencyAlertHandler import send_emergency_alert
 from scheduler.reminderScheduler import schedule_reminder
 import logging
 
-
 load_dotenv()
-
 
 app = Flask(__name__)
 CORS(app)
 logging.basicConfig(level=logging.INFO)
 
-
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'Notification Service running'}), 200
 
-
 @app.route('/api/sms', methods=['POST'])
 def send_sms_route():
-    """Send SMS via Email-to-SMS Gateway"""
+    """Send SMS notification"""
     try:
         data = request.get_json()
         phone = data.get('phone')
-        carrier = data.get('carrier')  # SMS gateway domain (e.g., 'txt.att.net')
         message = data.get('message')
 
-        if not phone or not carrier or not message:
-            return jsonify({'error': 'phone, carrier, and message are required'}), 400
+        if not phone or not message:
+            return jsonify({'error': 'Phone and message required'}), 400
 
-        result = send_sms(phone, carrier, message)
+        result = send_sms(phone, message)
         return jsonify(result), 200 if result['success'] else 500
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/api/email', methods=['POST'])
 def send_email_route():
@@ -60,7 +54,6 @@ def send_email_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/api/push', methods=['POST'])
 def send_push_route():
     """Send push notification"""
@@ -75,7 +68,6 @@ def send_push_route():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/api/schedule-reminder', methods=['POST'])
 def schedule_reminder_route():
@@ -94,7 +86,6 @@ def schedule_reminder_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/api/emergency-alert', methods=['POST'])
 def emergency_alert_route():
     """Send emergency alert"""
@@ -109,7 +100,6 @@ def emergency_alert_route():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=os.getenv('FLASK_ENV') == 'development',
