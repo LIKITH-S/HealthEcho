@@ -1,8 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import UserProfileDropdown from './UserProfileDropdown'
-// Import your logo (SVG/PNG/JPEG)
-import logo from '../../assets/logo.svg' // Change extension/path as required
+import logo from '../../assets/logo.svg'
 
 function Header({ user, onTabChange }) {
     const navigate = useNavigate()
@@ -16,13 +15,9 @@ function Header({ user, onTabChange }) {
 
     const handleLogoClick = () => {
         if (user?.role === 'patient' && location.pathname === '/patient-dashboard') {
-            if (onTabChange) {
-                onTabChange('overview')
-            }
+            if (onTabChange) onTabChange('overview')
         } else if (user?.role === 'doctor' && location.pathname === '/doctor-dashboard') {
-            if (onTabChange) {
-                onTabChange('overview')
-            }
+            if (onTabChange) onTabChange('overview')
         } else {
             if (user?.role === 'patient') {
                 navigate('/patient-dashboard', { state: { tab: 'overview' } })
@@ -40,12 +35,12 @@ function Header({ user, onTabChange }) {
                 <button
                     onClick={handleLogoClick}
                     className="flex items-center space-x-2 hover:opacity-80 transition"
-                    style={{ background: 'transparent' }}
+                    style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                 >
                     <img
                         src={logo}
                         alt="HealthEcho Logo"
-                        style={{ height: "80px", width: "auto", background: '#f7faff' }}
+                        style={{ height: '80px', width: 'auto', background: '#f7faff', borderRadius: '12px' }}
                     />
                 </button>
                 <div className="flex items-center space-x-6">

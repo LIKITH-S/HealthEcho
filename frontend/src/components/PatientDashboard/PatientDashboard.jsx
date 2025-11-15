@@ -1,12 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import ReportUpload from './ReportUpload';
-import ReportSummary from './ReportSummary';
-import Recommendations from './Recommendations';
-import HealthInsightsDashboard from './HealthInsightsDashboard';
+import React, { useState, useEffect } from "react";
+import ReportUpload from "./ReportUpload";
+import ReportSummary from "./ReportSummary";
 
-function PatientDashboard({ initialTab = 'overview', onTabChange }) {
+const styles = {
+    patientDashboard: {
+        maxWidth: 1400,
+        margin: "0 auto",
+        padding: 24,
+        fontFamily:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+    },
+    tabs: {
+        display: "flex",
+        gap: 8,
+        borderBottom: "2px solid #ddd",
+    },
+    tabButton: {
+        background: "none",
+        border: "none",
+        padding: "12px 16px",
+        cursor: "pointer",
+        fontWeight: 600,
+        color: "#555",
+        borderBottomWidth: 3,
+        borderBottomStyle: "solid",
+        borderBottomColor: "transparent",
+        transition: "all 0.3s ease",
+    },
+    tabButtonActive: {
+        color: "#1e88e5",
+        borderBottomColor: "#1e88e5",
+    },
+    tabContent: {
+        marginTop: 32,
+    },
+};
+
+function PatientDashboard({ initialTab = "overview", onTabChange }) {
     const [activeTab, setActiveTab] = useState(initialTab);
     const [reports, setReports] = useState([]);
+    const [latestReport, setLatestReport] = useState(null);
 
     useEffect(() => {
         setActiveTab(initialTab);
@@ -14,57 +47,40 @@ function PatientDashboard({ initialTab = 'overview', onTabChange }) {
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
-        if (onTabChange) {
-            onTabChange(tab);
-        }
+        if (onTabChange) onTabChange(tab);
     };
 
-    // Allow image uploads by their extension only
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-    const handleReportUpload = (report) => {
-        if (!report) return;
-        const ext = report.name.split('.').pop().toLowerCase();
-        if (allowedExtensions.includes(ext)) {
-            setReports([...reports, report]);
-        } else {
-            alert('Please upload an image file (.jpg, .jpeg, .png, .gif, .bmp, .webp)');
-        }
+    const handleReportUpload = (uploadedReport) => {
+        if (!uploadedReport) return;
+        setReports([...reports, uploadedReport]);
+        setLatestReport(uploadedReport);
+        setActiveTab("summary");
     };
 
     return (
-        <div className="space-y-6">
-            {/* Tabs */}
-            <div className="flex space-x-4 border-b">
-                {['overview', 'upload', 'reports', 'insights'].map((tab) => (
+        <div style={styles.patientDashboard}>
+            <div style={styles.tabs}>
+                {["overview", "upload", "summary", "insights"].map((tab) => (
                     <button
                         key={tab}
+                        style={{
+                            ...styles.tabButton,
+                            ...(activeTab === tab ? styles.tabButtonActive : {}),
+                        }}
                         onClick={() => handleTabClick(tab)}
-                        className={`py-2 px-4 font-semibold border-b-2 transition ${activeTab === tab
-                            ? 'border-indigo-600 text-indigo-600'
-                            : 'border-transparent text-gray-600 hover:text-gray-900'
-                            }`}
                     >
-                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        {tab.charAt(0).toUpperCase() + tab.slice(1).replace(/_/g, " ")}
                     </button>
                 ))}
             </div>
-
-            {/* Content */}
-            <div>
-                {activeTab === 'overview' && <ReportSummary />}
-                {activeTab === 'upload' && (
-                    <ReportUpload onUpload={handleReportUpload} />
+            <div style={styles.tabContent}>
+                {activeTab === "upload" && <ReportUpload onUpload={handleReportUpload} />}
+                {activeTab === "summary" && (
+                    <ReportSummary reports={reports} latestReport={latestReport} />
                 )}
-                {activeTab === 'reports' && <ReportSummary reports={reports} />}
-                {activeTab === 'insights' && <HealthInsightsDashboard />}
+                {activeTab === "overview" && <div>Overview content here</div>}
+                {activeTab === "insights" && <div>Health insights content here</div>}
             </div>
-
-            {/* Recommendations */}
-            {activeTab === 'overview' && (
-                <div className="mt-8">
-                    <Recommendations />
-                </div>
-            )}
         </div>
     );
 }

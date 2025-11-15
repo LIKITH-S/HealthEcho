@@ -1,70 +1,157 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-function ReportSummary({ reports }) {
-    const [allReports, setAllReports] = useState(reports || [])
-    const [loading, setLoading] = useState(!reports)
+const styles = {
+    container: {
+        maxWidth: 900,
+        margin: "0 auto",
+        fontFamily:
+            "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+    },
+    reportCard: {
+        backgroundColor: "white",
+        boxShadow: "0 0 6px #ddd",
+        padding: 24,
+        borderRadius: 10,
+    },
+    reportHeader: {
+        display: "flex",
+        justifyContent: "space-between",
+        marginBottom: 16,
+    },
+    statusBadge: {
+        backgroundColor: "#1e88e5",
+        color: "white",
+        padding: "4px 12px",
+        borderRadius: 20,
+        fontWeight: 600,
+        fontSize: 12,
+    },
+    section: {
+        marginBottom: 16,
+    },
+    list: {
+        paddingLeft: 16,
+    },
+    reportList: {
+        listStyle: "none",
+        paddingLeft: 0,
+    },
+    reportListItem: {
+        cursor: "pointer",
+        padding: "8px 0",
+    },
+    activeReportListItem: {
+        fontWeight: "bold",
+        color: "#1e88e5",
+    },
+};
+
+function ReportSummary({ reports, latestReport }) {
+    const [allReports, setAllReports] = useState(reports || []);
+    const [loading, setLoading] = useState(!reports || reports.length === 0);
+    const [selectedReport, setSelectedReport] = useState(latestReport || null);
 
     useEffect(() => {
-        if (!reports) {
-            fetchReports()
+        if (!reports || reports.length === 0) {
+            fetchReports();
+        } else {
+            setAllReports(reports);
         }
-    }, [reports])
+    }, [reports]);
+
+    useEffect(() => {
+        if (latestReport) setSelectedReport(latestReport);
+    }, [latestReport]);
 
     const fetchReports = async () => {
         try {
-            const response = await axios.get('/api/reports')
-            setAllReports(response.data.reports)
-            setLoading(false)
+            const response = await axios.get("/api/reports");
+            setAllReports(response.data.reports);
+            setLoading(false);
         } catch (error) {
-            console.error('Failed to fetch reports:', error)
-            setLoading(false)
+            setLoading(false);
+            console.error("Failed to fetch reports:", error);
         }
+    };
+
+    const viewReportDetails = (report) => setSelectedReport(report);
+
+    if (loading && allReports.length === 0) {
+        return <p>Loading reports...</p>;
     }
 
-    if (loading) return <div className="text-center py-8">Loading reports...</div>
-
     return (
-        <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-4">Your Medical Reports</h2>
+        <div style={styles.container}>
+            {selectedReport && (
+                <div>
+                    <h2>Report Summary</h2>
+                    <div style={styles.reportCard}>
+                        <div style={styles.reportHeader}>
+                            <div>
+                                <h4>{selectedReport.file_name || selectedReport.fileName}</h4>
+                                <span>
+                                    {new Date(
+                                        selectedReport.upload_date || selectedReport.uploadDate
+                                    ).toLocaleDateString()}
+                                </span>
+                            </div>
+                            <span style={styles.statusBadge}>{selectedReport.status}</span>
+                        </div>
 
-            {allReports.length === 0 ? (
-                <p className="text-gray-500">No reports uploaded yet</p>
-            ) : (
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-4 py-2 text-left font-semibold">File Name</th>
-                                <th className="px-4 py-2 text-left font-semibold">Upload Date</th>
-                                <th className="px-4 py-2 text-left font-semibold">Status</th>
-                                <th className="px-4 py-2 text-left font-semibold">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {allReports.map((report) => (
-                                <tr key={report.id} className="border-t hover:bg-gray-50">
-                                    <td className="px-4 py-3">{report.file_name}</td>
-                                    <td className="px-4 py-3">{new Date(report.upload_date).toLocaleDateString()}</td>
-                                    <td className="px-4 py-3">
-                                        <span className={`px-3 py-1 rounded text-sm font-semibold ${report.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                            report.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                                'bg-gray-100 text-gray-800'
-                                            }`}>
-                                            {report.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-3">
-                                        <button className="text-indigo-600 hover:underline">View</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                        {selectedReport.summary && (
+                            <section style={styles.section}>
+                                <h5>Summary</h5>
+                                <p>{selectedReport.summary}</p>
+                            </section>
+                        )}
+
+                        {selectedReport.findings?.length > 0 && (
+                            <section style={styles.section}>
+                                <h5>Key Findings</h5>
+                                <ul style={styles.list}>
+                                    {selectedReport.findings.map((f, i) => (
+                                        <li key={i}>{f}</li>
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+
+                        {selectedReport.recommendations?.length > 0 && (
+                            <section style={styles.section}>
+                                <h5>Recommendations</h5>
+                                <ul style={styles.list}>
+                                    {selectedReport.recommendations.map((r, i) => (
+                                        <li key={i}>{r}</li>
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+                    </div>
                 </div>
             )}
+            <h3>All Reports</h3>
+            {allReports.length === 0 ? (
+                <p>No reports uploaded yet</p>
+            ) : (
+                <ul style={styles.reportList}>
+                    {allReports.map((report, i) => (
+                        <li
+                            key={i}
+                            style={{
+                                ...styles.reportListItem,
+                                ...(report === selectedReport ? styles.activeReportListItem : {}),
+                            }}
+                            onClick={() => viewReportDetails(report)}
+                        >
+                            {report.file_name || report.fileName} -{" "}
+                            {new Date(report.upload_date || report.uploadDate).toLocaleDateString()}
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
-    )
+    );
 }
 
-export default ReportSummary
+export default ReportSummary;
