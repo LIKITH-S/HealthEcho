@@ -11,6 +11,7 @@ __pycache__/
 # Virtual environments
 venv/
 .env
+notification_service/.venv/
 chatbot_service/.venv/
 **/.venv/
 

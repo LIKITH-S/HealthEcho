@@ -1,32 +1,43 @@
-from twilio.rest import Client
+import firebase_admin
+from firebase_admin import credentials, messaging
 import os
 import logging
 
 logger = logging.getLogger(__name__)
 
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-TWILIO_PHONE = os.getenv('TWILIO_PHONE')
+# Initialize Firebase
+try:
+    key_path = os.getenv('FIREBASE_KEY_PATH')
 
-client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    if key_path and os.path.exists(key_path):
+        cred = credentials.Certificate(key_path)
+        firebase_admin.initialize_app(cred)
+        logger.info("Firebase initialized successfully")
+    else:
+        logger.warning("Firebase key path not set or file missing")
 
-def send_sms(phone_number, message):
-    """Send SMS using Twilio"""
+except Exception as e:
+    logger.warning(f"Firebase initialization failed: {str(e)}")
+
+
+def send_sms(device_token, title, body):
+    """Send push notification via Firebase Cloud Messaging (FCM)."""
     try:
-        sms = client.messages.create(
-            body=message,
-            from_=TWILIO_PHONE,
-            to=phone_number
+        message = messaging.Message(
+            notification=messaging.Notification(title=title, body=body),
+            token=device_token
         )
-        
-        logger.info(f"SMS sent to {phone_number}")
+
+        response = messaging.send(message)
+        logger.info(f"Push notification sent → Token: {device_token}")
+
         return {
             'success': True,
-            'message_id': sms.sid
+            'message_id': response
         }
 
     except Exception as e:
-        logger.error(f"SMS failed: {str(e)}")
+        logger.error(f"Push failed → {str(e)}")
         return {
             'success': False,
             'error': str(e)

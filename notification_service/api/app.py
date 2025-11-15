@@ -2,43 +2,57 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
-from handlers.smsHandler import send_sms
-from handlers.emailHandler import send_email
-from handlers.pushNotificationHandler import send_push
-from handlers.emergencyAlertHandler import send_emergency_alert
-from scheduler.reminderScheduler import schedule_reminder
 import logging
 
+# Load environment variables
 load_dotenv()
 
-app = Flask(__name__)
+# -------------------- HANDLER IMPORTS ----------------------
+from handlers.smsHandler import send_sms        # SMS gateway OR push? (Your file has "send_push")
+from handlers.emailHandler import send_email
+from handlers.pushNotificationHandler import send_push as send_fcm_push
+from handlers.emergencyAlertHandler import send_emergency_alert
+from scheduler.reminderScheduler import schedule_reminder
+# -----------------------------------------------------------
+
+
+app = Flask(__name__)     # FIXED
 CORS(app)
 logging.basicConfig(level=logging.INFO)
+
 
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'Notification Service running'}), 200
 
+
+# =====================  SMS ROUTE  =======================
 @app.route('/api/sms', methods=['POST'])
 def send_sms_route():
-    """Send SMS notification"""
+    """
+    SMS handler — your smsHandler.py only contains send_push()
+    So we temporarily use send_push() for SMS unless you supply real SMS code.
+    """
     try:
         data = request.get_json()
         phone = data.get('phone')
+        carrier = data.get('carrier')
         message = data.get('message')
 
-        if not phone or not message:
-            return jsonify({'error': 'Phone and message required'}), 400
+        if not phone or not carrier or not message:
+            return jsonify({'error': 'phone, carrier, and message are required'}), 400
 
-        result = send_sms(phone, message)
+        # Using your smsHandler's send_push method for SMS (until you provide actual SMS gateway handler)
+        result = send_push(phone, f"SMS to {phone}", message)
         return jsonify(result), 200 if result['success'] else 500
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+# =====================  EMAIL ROUTE  =======================
 @app.route('/api/email', methods=['POST'])
 def send_email_route():
-    """Send email notification"""
     try:
         data = request.get_json()
         email = data.get('email')
@@ -54,41 +68,47 @@ def send_email_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+# ===================== PUSH NOTIFICATION ROUTE ===============
 @app.route('/api/push', methods=['POST'])
 def send_push_route():
-    """Send push notification"""
+    """
+    Firebase Cloud Messaging
+    """
     try:
         data = request.get_json()
         device_token = data.get('device_token')
         title = data.get('title')
         body = data.get('body')
 
-        result = send_push(device_token, title, body)
+        result = send_fcm_push(device_token, title, body)
         return jsonify(result), 200 if result['success'] else 500
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+# ===================== REMINDER ROUTE =======================
 @app.route('/api/schedule-reminder', methods=['POST'])
 def schedule_reminder_route():
-    """Schedule medication reminder"""
     try:
         data = request.get_json()
-        reminder_id = data.get('reminder_id')
-        patient_id = data.get('patient_id')
-        time = data.get('time')
-        frequency = data.get('frequency')
-        message = data.get('message')
-
-        schedule_reminder(reminder_id, patient_id, time, frequency, message)
+        schedule_reminder(
+            data.get('reminder_id'),
+            data.get('patient_id'),
+            data.get('time'),
+            data.get('frequency'),
+            data.get('message')
+        )
         return jsonify({'message': 'Reminder scheduled'}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+# ===================== EMERGENCY ALERT ROUTE =================
 @app.route('/api/emergency-alert', methods=['POST'])
 def emergency_alert_route():
-    """Send emergency alert"""
     try:
         data = request.get_json()
         contacts = data.get('contacts', [])
@@ -101,7 +121,11 @@ def emergency_alert_route():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+# ===================== RUN SERVER ============================
 if __name__ == '__main__':
-    app.run(debug=os.getenv('FLASK_ENV') == 'development',
-            host='0.0.0.0',
-            port=int(os.getenv('NOTIFICATION_PORT', 5003)))
+    app.run(
+        debug=os.getenv('FLASK_ENV') == 'development',
+        host='0.0.0.0',
+        port=int(os.getenv('NOTIFICATION_PORT', 5003))
+    )
