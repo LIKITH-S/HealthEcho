@@ -1,33 +1,35 @@
-from twilio.rest import Client
-import os
 import logging
+from handlers.emailHandler import send_email
 
 logger = logging.getLogger(__name__)
 
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-TWILIO_PHONE = os.getenv('TWILIO_PHONE')
 
-client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-
-def send_sms(phone_number, message):
-    """Send SMS using Twilio"""
+def send_sms(phone_number, carrier_gateway, message):
+    """
+    Send SMS using Email-to-SMS Gateway.
+    
+    Args:
+        phone_number (str): Recipient mobile number (e.g., '918150657720')
+        carrier_gateway (str): Carrier's SMS gateway domain (e.g., 'txt.att.net')
+        message (str): SMS message content (plain text)
+    
+    Returns:
+        dict: {'success': True/False, 'response': response_data or 'error': error_message}
+    """
     try:
-        sms = client.messages.create(
-            body=message,
-            from_=TWILIO_PHONE,
-            to=phone_number
-        )
+        # Construct SMS gateway email address
+        recipient_email = f"{phone_number}@{carrier_gateway}"
         
-        logger.info(f"SMS sent to {phone_number}")
-        return {
-            'success': True,
-            'message_id': sms.sid
-        }
-
+        # Subject is typically ignored by SMS gateways
+        subject = ""
+        body = message
+        
+        # Use existing email handler to send SMS
+        result = send_email(recipient=recipient_email, subject=subject, body=body)
+        
+        logger.info(f"SMS sent via email gateway to {phone_number} on {carrier_gateway}")
+        return result
+        
     except Exception as e:
-        logger.error(f"SMS failed: {str(e)}")
-        return {
-            'success': False,
-            'error': str(e)
-        }
+        logger.error(f"SMS send failed: {str(e)}")
+        return {"success": False, "error": str(e)}

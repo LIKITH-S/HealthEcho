@@ -12,6 +12,7 @@ __pycache__/
 venv/
 .env
 chatbot_service/.venv/
+notification_service/myvenv/
 **/.venv/
 
 # Build outputs
